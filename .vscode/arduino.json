@@ -1,0 +1,7 @@
+{
+    "configuration": "PartitionScheme=default,UploadSpeed=1500000,DebugLevel=none",
+    "board": "esp32:esp32:m5stack-atom",
+    "output": "./output/",
+    "sketch": "VersaProto\\VersaProto.ino",
+    "port": "COM6"
+}
