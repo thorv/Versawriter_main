@@ -233,14 +233,14 @@ class Versawrite : public Pattern {
     int lineNum;
     int period[2];
     int cnt;
-    RingBuf rbuf;
+    RingBuf &rbuf;
     bool sync;
     int delta = 1;
 
-   public:
-    Versawrite(const char p[][LEDNUM][3], int sz) : ptn(p), size(sz){
+    float avgVal;
 
-                                                            };
+   public:
+    Versawrite(const char p[][LEDNUM][3], int sz) : ptn(p), size(sz), rbuf(*new RingBuf(2048)) {};
     void init() {
         lineNum = size;
     }
@@ -250,13 +250,14 @@ class Versawrite : public Pattern {
         bool zx = false;
         if (imuUpdate) {
             rbuf.push(acc);
-            float avgVal = rbuf.getStatistics();
+            //float avgVal = rbuf.getStatistics();
+            avgVal = rbuf.getStatistics();
             if ((rbuf.getPrev() / 100. - avgVal) * (acc - avgVal) < 0 && (acc - avgVal) > 0) {  //ゼロクロス
                 zx = true;
                 period[1] = period[0];
                 period[0] = cnt;
                 cnt = 0;
-                if (period[0] * 0.8 < period[1] && period[0] > period[1] * 0.8) {
+                if (period[0] * 0.7 < period[1] && period[0] > period[1] * 0.7) { //振っているかの検出
                     sync = true;
                 } else {
                     sync = false;
@@ -276,6 +277,11 @@ class Versawrite : public Pattern {
         }
         cnt++;
         lineNum += delta;
+        /*
+        Serial.print(avgVal);
+        Serial.print(' ');
+        Serial.println(lineNum);
+        */
         if (period[0] - cnt == size / 2) {
             lineNum = 0;
             delta = 1;
@@ -311,9 +317,10 @@ class End : public Pattern {
 //  {ストーリー名称文字列(内容任意), ストーリー開始時刻, 点灯パターン名 }
 const story storyBoard[] = {
     {"wave", 1000, wave},
-    {"fruit", 30000, vfr2},
-    {"number", 60000, num},
-    {"Hit", 90000, hit1},
+    {"fruit", 5000, vfr2},
+    {"number", 40000, vnum},
+    {"Love",70000,vlove_a},
+    {"Hit", 1000000, hit1},
     {"END", 0x7fffffff, end}};
 
 const size_t storySize = sizeof(storyBoard) / sizeof(storyBoard[0]);

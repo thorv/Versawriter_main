@@ -83,6 +83,7 @@ void statInit() {
 void setup() {
 #if defined(ARDUINO_M5Stick_C)
     M5.begin();
+    M5.Axp.ScreenBreath(10);  // LCDのバックライトを暗く点灯する
     M5.Lcd.println("Waiting...");
 #elif defined(ARDUINO_M5Stack_ATOM)
     M5.begin(true, false, true);
@@ -99,13 +100,13 @@ void setup() {
 #if defined(ARDUINO_M5Stick_C)
         M5.Lcd.println("I am time reference.");
 #elif defined(ARDUINO_M5Stack_ATOM)
-        M5.dis.drawpix(0, CRGB(255, 0, 0));
+        M5.dis.drawpix(0, CRGB(32, 0, 0));
 #endif
-    }else{
+    } else {
 #if defined(ARDUINO_M5Stick_C)
         M5.Lcd.println("Sync to refrence.");
 #elif defined(ARDUINO_M5Stack_ATOM)
-        M5.dis.drawpix(0, CRGB(0, 0, 255));
+        M5.dis.drawpix(0, CRGB(0, 0, 32));
 #endif
     }
 
@@ -118,23 +119,27 @@ void setup() {
 }
 
 void loop() {
-    bool imuUpdate = false;
-    unsigned long t = updateSync();
     if (amITRef()) {  //最初に戻せるのは基準機だけ
         M5.update();
         //ボタンが押されたら最初から
         if (Btn.wasPressed()) {
+#if defined(ARDUINO_M5Stick_C)
+        M5.Axp.ScreenBreath(10);  // LCDのバックライトを暗く点灯する
+#elif defined(ARDUINO_M5Stack_ATOM)
+            M5.dis.drawpix(0, CRGB(32, 0, 0));
+#endif
             resetTRef();
             statInit();
         }
     } else if (chkRewindReq()) {  //基準機からの巻き戻し要求
         statInit();
     }
-    if (t > 1000) {
+    unsigned long t = updateSync();
+    if (t > 5000) {
 #if defined(ARDUINO_M5Stick_C)
         M5.Axp.ScreenBreath(0);  // LCDのバックライトをOffにする
 #elif defined(ARDUINO_M5Stack_ATOM)
-        M5.dis.drawpix(0, CRGB::Black); //M5AtomのLED0番消灯
+        M5.dis.drawpix(0, CRGB::Black);  // M5AtomのLED0番消灯
 #endif
     }
     //時間がきたらストーリーの切り替え
@@ -146,6 +151,7 @@ void loop() {
         }
     }
 
+    bool imuUpdate = false;
     if (getImuReady()) {  // IMUのデータ更新あり
         imuUpdate = true;
         mpu6886.getAccelData(&accX, &accY, &accZ);
