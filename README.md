@@ -37,8 +37,8 @@ I'm trying to implement some classes.
 but the tracking performance is not good. (Versawrite class)  
 
 Related tools are also under construction.
-- A tool that generates a pixel array of lighting patterns from an image
-- A tool to correct the shape distortion of the image due to rotation
+- [A tool that generates a pixel array of lighting patterns from an image](https://github.com/thorv/Versawriter_getPict)
+- [A tool to correct the shape distortion of the image due to rotation](https://github.com/thorv/Versawriter_ArcTool)
 
 Note: Comments in the program are written in Japanese.
 
@@ -63,8 +63,8 @@ LEDショープログラムは、どれかひとつのCPUユニットのボタ�
 - 装置全体を手で左右に振ることに同期して画を描くことも試行してみていますが、今一つ追従性能がよくありません。(Versawriteクラス)
 
 関連するツールも作成中です。
-- 画像から点灯パターンの画素配列を生成するツール
-- 回転による画像の形状を補正するツール
+- [画像から点灯パターンの画素配列を生成するツール](https://github.com/thorv/Versawriter_ArcTool)
+- [回転による画像の形状を補正するツール](https://github.com/thorv/Versawriter_ArcTool)
 
 
 (5/May/2022)
